@@ -37,21 +37,23 @@ app_data = {
                     "name": "John Doe",
                     "email": "john.doe@example.com",
                     "phone": "555-555-5555",
-                    "balance": 0.0,
+                    "balance": -300,
                 },
                 {
                     "name": "Jane Doe",
                     "email": "jane.doe@example.com",
                     "phone": "555-555-5555",
-                    "balance": 0.0,
+                    "balance": 300,
                 },
             ],
             "expenses": [
                 {
+                    "who_pay?": "Jane Doe",
                     "description": "March cleaning supply",
                     "amt": 100
                 },
                 {
+                    "who_pay?": "Jane Doe",
                     "description": "April utility bill",
                     "amt": 200
                 }
