@@ -132,6 +132,42 @@ def add_expense(group_name):
     else:
         return jsonify({"message": "Group does not exist or expense data is invalid"}), 400
 
+@app.route("/api/groups/<group_name>/members/<member_email>", methods=["DELETE"])
+def remove_member(group_name, member_email):
+    group = app_data['groups'].get(group_name)
+    if group:
+        members = group['members']
+        original_len = len(members)
+        group['members'] = [member for member in members if member['email'] != member_email]
+        if len(group['members']) < original_len:
+            return jsonify({"message": f"Member with email {member_email} removed from group '{group_name}'"}), 200
+        else:
+            return jsonify({"message": "Member not found"}), 404
+    else:
+        return jsonify({"message": "Group not found"}), 404
+
+@app.route("/api/groups/<group_name>/expenses/<expense_id>", methods=["DELETE"])
+def remove_expense(group_name, expense_id):
+    group = app_data['groups'].get(group_name)
+    if group:
+        expenses = group['expenses']
+        original_len = len(expenses)
+        group['expenses'] = [expense for expense in expenses if str(expense['id']) != expense_id]
+        if len(group['expenses']) < original_len:
+            return jsonify({"message": f"Expense with id {expense_id} removed from group '{group_name}'"}), 200
+        else:
+            return jsonify({"message": "Expense not found"}), 404
+    else:
+        return jsonify({"message": "Group not found"}), 404
+
+@app.route("/api/groups/<group_name>", methods=["DELETE"])
+def delete_group(group_name):
+    if group_name in app_data['groups']:
+        del app_data['groups'][group_name]
+        return jsonify({"message": f"Group '{group_name}' deleted successfully"}), 200
+    else:
+        return jsonify({"message": "Group not found"}), 404
+
 
 if __name__ == "__main__":
     app.run(debug=True)
