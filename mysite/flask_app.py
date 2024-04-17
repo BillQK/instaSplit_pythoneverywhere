@@ -2,62 +2,84 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
+
+DEFAULT_IMAGE_URL = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1jVxHEjBZkIfrz6bYmOy1cE-pbs6Hpdb324HOb2Ntlg&s"
+TRAVEL_GROUP_IMAGE_URL = "https://thumb.ac-illust.com/23/23ae0414df316a166952315cbf00cdd9_t.jpeg"
+APT_GROUP_IMAGE_URL = "https://www.creativefabrica.com/wp-content/uploads/2022/04/22/Apartment-for-rent-Graphics-29438801-1-580x387.jpg"
+MEMBER_IMAGE_1 = "https://avatar.iran.liara.run/public/1" #John Doe?
+MEMBER_IMAGE_2 = "https://avatar.iran.liara.run/public/41"
+MEMBER_IMAGE_3 = "https://avatar.iran.liara.run/public/87" #Jane Doe?
+CLEANING_SUPPLY = "https://static.vecteezy.com/system/resources/thumbnails/009/677/869/small/bucket-with-cleaning-supplies-collection-isolated-on-white-background-housework-concept-design-elements-illustration-vector.jpg"
+UTILITY_BILL = "https://cdn-icons-png.flaticon.com/512/7866/7866488.png"
+LUNCH = "https://cdn-icons-png.freepik.com/256/2771/2771406.png"
+UBER = "https://cdn-icons-png.flaticon.com/512/2077/2077143.png"
+
 # Initial mock data structure
 app_data = {
     "groups": {
         "apartment": {
+            "image": APT_GROUP_IMAGE_URL,
             "members": [
                 {
                     "name": "John Doe",
                     "email": "john.doe@example.com",
                     "phone": "555-555-5555",
                     "balance": -300,
+                    "image": MEMBER_IMAGE_1
                 },
                 {
                     "name": "Jane Doe",
                     "email": "jane.doe@example.com",
-                    "phone": "555-555-5555",
+                    "phone": "555-555-5556",
                     "balance": 300,
+                    "image": MEMBER_IMAGE_3
                 },
             ],
             "expenses": [
                 {
                     "who_pay?": "Jane Doe",
                     "description": "March cleaning supply",
-                    "amt": 100
+                    "amt": 100,
+                    "image": CLEANING_SUPPLY
                 },
                 {
                     "who_pay?": "Jane Doe",
                     "description": "April utility bill",
-                    "amt": 200
+                    "amt": 200,
+                    "image": UTILITY_BILL
                 }
             ],
         },
         "Coop Group": {
+            "image": TRAVEL_GROUP_IMAGE_URL,
             "members": [
                 {
                     "name": "John Doe",
                     "email": "john.doe@example.com",
                     "phone": "555-555-5555",
                     "balance": -300,
+                    "image": MEMBER_IMAGE_1
                 },
                 {
-                    "name": "Jane Doe",
-                    "email": "jane.doe@example.com",
-                    "phone": "555-555-5555",
+                    "name": "Bob Smith",
+                    "email": "bob.smith@example.com",
+                    "phone": "555-555-5557",
                     "balance": 300,
+                    "image": MEMBER_IMAGE_2
                 },
             ],
             "expenses": [
                 {
-                    "who_pay?": "Jane Doe",
-                    "description": "March cleaning supply",
-                    "amt": 100
+                    "who_pay?": "Bob Smith",
+                    "description": "March 22 lunch",
+                    "amt": 100,
+                    "image": LUNCH
                 },
                 {
-                    "who_pay?": "Jane Doe",
-                    "description": "April utility bill",
-                    "amt": 200
+                    "who_pay?": "Bob Smith",
+                    "description": "Uber to airport",
+                    "amt": 200,
+                    "image": UBER
                 }
             ],
         },
