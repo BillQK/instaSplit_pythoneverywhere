@@ -4,6 +4,14 @@ app = Flask(__name__)
 
 # Initial mock data structure
 app_data = {
+    "users" : [
+         {
+                    "name": "John Doe",
+                    "email": "john.doe@example.com",
+                    "phone": "555-555-5555",
+                    "password": 123,
+                    "balance": -300,
+                }]
     "groups": {
         "apartment": {
             "members": [
@@ -21,12 +29,12 @@ app_data = {
                 },
             ],
             "expenses": [
-                {
+                {"id": 1,
                     "who_pay?": "Jane Doe",
                     "description": "March cleaning supply",
                     "amt": 100
                 },
-                {
+                {"id": 2,
                     "who_pay?": "Jane Doe",
                     "description": "April utility bill",
                     "amt": 200
@@ -50,11 +58,13 @@ app_data = {
             ],
             "expenses": [
                 {
+                    "id": 1,
                     "who_pay?": "Jane Doe",
                     "description": "March cleaning supply",
                     "amt": 100
                 },
                 {
+                    "id": 2,
                     "who_pay?": "Jane Doe",
                     "description": "April utility bill",
                     "amt": 200
@@ -64,6 +74,45 @@ app_data = {
 
     }
 }
+
+
+@app.route("/api/users/register", methods=["POST"])  # Changed to POST to align with common practices
+def register_user():
+    data = request.json
+    if data:
+        email = data.get('email')
+        if any(user['email'] == email for user in app_data['users']):
+            return jsonify({"message": "Email already exists"}), 409
+
+        new_user = {
+            "email": email,
+            "phone": data.get('phoneNumber'),
+            "password": generate_password_hash(data.get('password')),
+            "name": data.get('username'),
+            "balance": 0  # Assuming you want to track balance
+        }
+        app_data['users'].append(new_user)
+        return jsonify(new_user), 201
+    else:
+        return jsonify({"message": "Invalid data"}), 400
+
+
+@app.route("/api/users/login", methods=["POST"])
+def login_user():
+    data = request.json
+    if data:
+        email = data.get('email')
+        password = data.get('password')
+        user = next((user for user in app_data['users'] if user['email'] == email), None)
+        if user and check_password_hash(user['password'], password):
+            return jsonify({"message": "Login successful", "user": user['name']}), 200
+        else:
+            return jsonify({"message": "Invalid credentials"}), 401
+    else:
+        return jsonify({"message": "Invalid login data"}), 400
+
+
+
 
 
 @app.route("/api/groups/<group_name>", methods=["GET"])
