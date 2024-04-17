@@ -16,14 +16,7 @@ UBER = "https://cdn-icons-png.flaticon.com/512/2077/2077143.png"
 
 # Initial mock data structure
 app_data = {
-    "users" : [
-         {
-                    "name": "John Doe",
-                    "email": "john.doe@example.com",
-                    "phone": "555-555-5555",
-                    "password": 123,
-                    "balance": -300,
-                }]
+    "users" : [],
     "groups": {
         "apartment": {
             "image": APT_GROUP_IMAGE_URL,
@@ -98,6 +91,15 @@ app_data = {
 }
 
 
+# userId Generator : start at 10 for no conflict
+def user_id_generator(start=10):
+    current = start
+    while True:
+        yield current
+        current += 1
+# instance
+id_gen = user_id_generator()
+
 @app.route("/api/users/register", methods=["POST"])  # Changed to POST to align with common practices
 def register_user():
     data = request.json
@@ -107,11 +109,11 @@ def register_user():
             return jsonify({"message": "Email already exists"}), 409
 
         new_user = {
+            "userId" : next(id_gen),
             "email": email,
-            "phone": data.get('phoneNumber'),
-            "password": generate_password_hash(data.get('password')),
-            "name": data.get('username'),
-            "balance": 0  # Assuming you want to track balance
+            "phoneNumber": data.get('phoneNumber'),
+            "password": data.get('password'),
+            "userName": data.get('userName'),
         }
         app_data['users'].append(new_user)
         return jsonify(new_user), 201
@@ -124,17 +126,13 @@ def login_user():
     data = request.json
     if data:
         email = data.get('email')
-        password = data.get('password')
         user = next((user for user in app_data['users'] if user['email'] == email), None)
-        if user and check_password_hash(user['password'], password):
-            return jsonify({"message": "Login successful", "user": user['name']}), 200
+        if user:
+            return jsonify(user), 200
         else:
             return jsonify({"message": "Invalid credentials"}), 401
     else:
         return jsonify({"message": "Invalid login data"}), 400
-
-
-
 
 
 @app.route("/api/groups/<group_name>", methods=["GET"])
