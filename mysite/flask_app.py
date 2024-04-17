@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 DEFAULT_IMAGE_URL = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1jVxHEjBZkIfrz6bYmOy1cE-pbs6Hpdb324HOb2Ntlg&s"
 TRAVEL_GROUP_IMAGE_URL = "https://thumb.ac-illust.com/23/23ae0414df316a166952315cbf00cdd9_t.jpeg"
-APT_GROUP_IMAGE_URL = "https://www.creativefabrica.com/wp-content/uploads/2022/04/22/Apartment-for-rent-Graphics-29438801-1-580x387.jpg"
+APT_GROUP_IMAGE_URL = "https://cdn-icons-png.flaticon.com/512/7643/7643928.png"
 MEMBER_IMAGE_1 = "https://avatar.iran.liara.run/public/1" #John Doe?
 MEMBER_IMAGE_2 = "https://avatar.iran.liara.run/public/41" # Bob Smith?
 MEMBER_IMAGE_3 = "https://avatar.iran.liara.run/public/87" #Jane Doe?
