@@ -7,7 +7,7 @@ DEFAULT_IMAGE_URL = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1jVx
 TRAVEL_GROUP_IMAGE_URL = "https://thumb.ac-illust.com/23/23ae0414df316a166952315cbf00cdd9_t.jpeg"
 APT_GROUP_IMAGE_URL = "https://www.creativefabrica.com/wp-content/uploads/2022/04/22/Apartment-for-rent-Graphics-29438801-1-580x387.jpg"
 MEMBER_IMAGE_1 = "https://avatar.iran.liara.run/public/1" #John Doe?
-MEMBER_IMAGE_2 = "https://avatar.iran.liara.run/public/41"
+MEMBER_IMAGE_2 = "https://avatar.iran.liara.run/public/41" # Bob Smith?
 MEMBER_IMAGE_3 = "https://avatar.iran.liara.run/public/87" #Jane Doe?
 CLEANING_SUPPLY = "https://static.vecteezy.com/system/resources/thumbnails/009/677/869/small/bucket-with-cleaning-supplies-collection-isolated-on-white-background-housework-concept-design-elements-illustration-vector.jpg"
 UTILITY_BILL = "https://cdn-icons-png.flaticon.com/512/7866/7866488.png"
@@ -113,28 +113,77 @@ def get_expenses(group_name):
     else:
         return jsonify({"message": "Group not found"}), 404
 
+# @app.route("/api/groups", methods=["POST"])
+# def create_group():
+#     group_name = request.json.get('name')
+#     if group_name:
+#         app_data['groups'][group_name] = {"members": [], "expenses": []}
+#         return jsonify({"message": f"Group '{group_name}' created successfully"}), 201
+#     else:
+#         return jsonify({"message": "Group name is required"}), 400
 @app.route("/api/groups", methods=["POST"])
 def create_group():
-    group_name = request.json.get('name')
-    if group_name:
-        app_data['groups'][group_name] = {"members": [], "expenses": []}
-        return jsonify({"message": f"Group '{group_name}' created successfully"}), 201
+    group_data = request.json
+    if group_data and "name" in group_data:
+        new_group = {
+            "members": [],
+            "expenses": [],
+            "image": group_data.get("image", DEFAULT_IMAGE_URL)  # Include image with a default
+        }
+        app_data['groups'][group_data["name"]] = new_group
+        return jsonify({"message": f"Group '{group_data['name']}' created successfully", "group": new_group}), 201
     else:
         return jsonify({"message": "Group name is required"}), 400
+
+
+# @app.route("/api/groups/<group_name>/members", methods=["POST"])
+# def add_member(group_name):
+#     member_data = request.json
+#     if group_name in app_data['groups'] and member_data:
+#         app_data['groups'][group_name]["members"].append(member_data)
+#         return jsonify({"message": f"Member added to group '{group_name}'"}), 201
+#     else:
+#         return jsonify({"message": "Group does not exist or member data is invalid"}), 400
 
 @app.route("/api/groups/<group_name>/members", methods=["POST"])
 def add_member(group_name):
     member_data = request.json
     if group_name in app_data['groups'] and member_data:
+        member_data["image"] = member_data.get("image", DEFAULT_IMAGE_URL)  # Set default image if none provided
         app_data['groups'][group_name]["members"].append(member_data)
-        return jsonify({"message": f"Member added to group '{group_name}'"}), 201
+        return jsonify({"message": f"Member added to group '{group_name}'", "member": member_data}), 201
     else:
         return jsonify({"message": "Group does not exist or member data is invalid"}), 400
+
+
+# @app.route("/api/groups/<group_name>/expenses", methods=["POST"])
+# def add_expense(group_name):
+#     expense_data = request.json
+#     if group_name in app_data['groups'] and expense_data:
+#         description = expense_data.get('description', '')
+#         amount = float(expense_data.get('amt', 0))
+
+#         group = app_data['groups'][group_name]
+#         members = group["members"]
+#         num_members = len(members)
+
+#         if num_members > 0 and amount > 0:
+#             split_amount = amount / num_members
+#             for member in members:
+#                 member['balance'] -= split_amount  # Assuming the member owes this amount
+
+#             group["expenses"].append({"description": description, "amt": amount, "split_amount": split_amount})
+#             return jsonify({"message": f"Expense '{description}' added and split in group '{group_name}'", "expense_data": expense_data}), 201
+#         else:
+#             return jsonify({"message": "No members in group to split the expense or invalid amount"}), 400
+#     else:
+#         return jsonify({"message": "Group does not exist or expense data is invalid"}), 400
 
 @app.route("/api/groups/<group_name>/expenses", methods=["POST"])
 def add_expense(group_name):
     expense_data = request.json
     if group_name in app_data['groups'] and expense_data:
+        expense_data["image"] = expense_data.get("image", DEFAULT_IMAGE_URL)  # Set default image if none provided
         description = expense_data.get('description', '')
         amount = float(expense_data.get('amt', 0))
 
@@ -147,12 +196,13 @@ def add_expense(group_name):
             for member in members:
                 member['balance'] -= split_amount  # Assuming the member owes this amount
 
-            group["expenses"].append({"description": description, "amt": amount, "split_amount": split_amount})
+            group["expenses"].append(expense_data)
             return jsonify({"message": f"Expense '{description}' added and split in group '{group_name}'", "expense_data": expense_data}), 201
         else:
             return jsonify({"message": "No members in group to split the expense or invalid amount"}), 400
     else:
         return jsonify({"message": "Group does not exist or expense data is invalid"}), 400
+
 
 @app.route("/api/groups/<group_name>/members/<member_email>", methods=["DELETE"])
 def remove_member(group_name, member_email):
